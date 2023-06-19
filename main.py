@@ -1,4 +1,5 @@
 import pygame
+import random
 
 TITLE = "TEST GAME"
 WINDOW_SIZE = (1280, 720)
@@ -19,7 +20,6 @@ class Entity:
         self.color = color
         self.rect = pygame.rect.Rect((x, y), self.size)
         self.mass = mass
-        self.apply_force(pygame.math.Vector2(0, 9))
 
     def apply_force(self, force):
         self.acceleration.x = force.x
@@ -58,7 +58,28 @@ class App:
         self.running = True
         self.dt = 0.0
         # test objes
-        self.entity = Entity(250, 25, 10.0, WHITE)
+        self.entities = []
+        self.numberofentity = 200
+        self.init_entities()
+
+    def init_entities(self):
+        for i in range(self.numberofentity):
+            x = random.randint(25, WINDOW_SIZE[0])
+            y = random.randint(25, WINDOW_SIZE[1])
+            mass = random.randint(1, 10)
+            color = self.random_color()
+            f1 = random.randint(1, 3)
+            f2 = random.randint(5, 9)
+            f = pygame.math.Vector2(f1, f2)
+            e = Entity(x, y, mass, color)
+            e.apply_force(f)
+            self.entities.append(e)
+
+    def random_color(self) -> tuple[int, int, int]:
+        r = random.randint(0, 255)
+        g = random.randint(0, 255)
+        b = random.randint(0, 255)
+        return (r, g, b)
 
     def run(self):
         while self.running:
@@ -76,8 +97,9 @@ class App:
             self.screen.fill(BLACK)
 
             # RENDER YOUR GAME HERE
-            self.entity.update(self.dt)
-            self.entity.draw(self.screen)
+            for entity in self.entities:
+                entity.update(self.dt)
+                entity.draw(self.screen)
 
             # flip() the display to put your work on screen
             pygame.display.flip()
